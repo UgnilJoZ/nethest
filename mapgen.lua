@@ -20,6 +20,7 @@ local function gen_nether_chunk(minp,maxp, seed)
 	local emin, emax = vm:read_from_map(minp, maxp)
 	local area = VoxelArea:new{MinEdge=emin, MaxEdge=emax}
 	local data = vm:get_data()
+	local light = vm:get_light_data()
 	local chulens = {x=emax.x-emin.x+1, y=emax.y-emin.y+1, z=emax.z-emin.z+1}
 
 	-- generate noise data
@@ -33,8 +34,15 @@ local function gen_nether_chunk(minp,maxp, seed)
 		for y = emin.y,emax.y do
 			for x = emin.x,emax.x do
 				nixyz = nixyz + 1
+				-- light
+				if y < -30872 then
+					light[nixyz] = 255
+				else
+					light[nixyz] = math.floor((510-y-30872) / 32)
+				end
+
+				-- material
 				local density = density_map[nixyz]
-				-- which material?
 				if density < 0 then
 					if y > -30872 then
 						data[nixyz] = c_air
@@ -47,9 +55,8 @@ local function gen_nether_chunk(minp,maxp, seed)
 			end-- for x
 		end-- for y
 	end-- for z
+	vm:set_light_data(light)
 	vm:set_data(data)
-	vm:set_lighting({day=12, night=15})
-	vm:calc_lighting()-- how to set the light to a uniform value?
 	vm:write_to_map(data)
 end
 
