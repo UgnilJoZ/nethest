@@ -65,3 +65,7 @@ minetest.register_on_generated(function(minp,maxp,seed)
 		gen_nether_chunk(minp,maxp,seed)
 	end
 end)
+
+minetest.register_on_mapgen_init(function(mgparams)
+        minetest.set_mapgen_params({mgname="singlenode"})
+end)
