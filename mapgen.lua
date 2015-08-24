@@ -61,7 +61,7 @@ local function gen_nether_chunk(minp,maxp, seed)
 end
 
 minetest.register_on_generated(function(minp,maxp,seed)
-	if minp.y < 30488 then
+	if minp.y < nethest.border then
 		gen_nether_chunk(minp,maxp,seed)
 	end
 end)
