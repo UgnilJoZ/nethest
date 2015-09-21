@@ -14,13 +14,17 @@ function nethest.nether_to_normalpos(nether_pos)
 	return pos
 end
 
+function nethest.is_nether_pos(pos)
+	return pos.y < nethest.border
+end
+
 -- When not in nether, object is moved to the nether, else out of it.
 function nethest.switch_creature_nether(object)
 	local pos = object:getpos()
 	
 	if object:is_player() then
 
-		if pos.y > nethest.border then
+		if not nethest.is_nether_pos(pos) then
 			object:set_sky("0x803020", "plain")
 			pos = nethest.normal_to_netherpos(pos)
 			object:override_day_night_ratio(0.92)
@@ -47,3 +51,12 @@ minetest.register_chatcommand("nether", {
 		end
 	end,
 })
+
+minetest.register_on_joinplayer(function(player)
+	print("aha!")
+	if nethest.is_nether_pos(player:getpos()) then
+		player:set_sky("0x803020", "plain")
+		player:override_day_night_ratio(0.92)
+		print("set sky and dn-ratio")
+	end
+end)
