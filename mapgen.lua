@@ -1,4 +1,4 @@
-local densenoise_offset = 1 - 2 * (minetest.setting_get("nethest_air_ratio") or 0.75)
+local densenoise_offset = 1 - 2 * (minetest.setting_get("hell_air_ratio") or 0.75)
 
 local np_density = {
 	offset = densenoise_offset,
@@ -10,10 +10,10 @@ local np_density = {
 	flags = "eased"
 }
 
-local function gen_nether_chunk(minp,maxp, seed)
+local function gen_hell_chunk(minp,maxp, seed)
 	-- content ids
 	local c_air = minetest.get_content_id("air")
-	local c_rack= minetest.get_content_id("nethest:rack")
+	local c_rack= minetest.get_content_id("hell:rack")
 	local c_lava= minetest.get_content_id("default:lava_source")
 	-- read chunk data
 	local vm = minetest.get_voxel_manip()
@@ -61,7 +61,7 @@ local function gen_nether_chunk(minp,maxp, seed)
 end
 
 minetest.register_on_generated(function(minp,maxp,seed)
-	if minp.y < nethest.border then
-		gen_nether_chunk(minp,maxp,seed)
+	if minp.y < hell.border then
+		gen_hell_chunk(minp,maxp,seed)
 	end
 end)

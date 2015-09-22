@@ -1,36 +1,36 @@
-function nethest.normal_to_netherpos(normal_pos)
+function hell.normal_to_hellpos(normal_pos)
 	local pos = normal_pos
-	pos.x = pos.x / 8
-	pos.y = pos.y / 32 - 30800
-	pos.z = pos.z / 8
+	pos.x = pos.x
+	pos.y = pos.y - 30800
+	pos.z = pos.z
 	return pos
 end
 
-function nethest.nether_to_normalpos(nether_pos)
-	local pos = nether_pos
-	pos.x = pos.x * 8
-	pos.y = (pos.y + 30800) * 32
-	pos.z = pos.z * 8
+function hell.hell_to_normalpos(hell_pos)
+	local pos = hell_pos
+	pos.x = pos.x
+	pos.y = (pos.y + 30800)
+	pos.z = pos.z
 	return pos
 end
 
-function nethest.is_nether_pos(pos)
-	return pos.y < nethest.border
+function hell.is_hell_pos(pos)
+	return pos.y < hell.border
 end
 
--- When not in nether, object is moved to the nether, else out of it.
-function nethest.switch_creature_nether(object)
+-- When not in hell, object is moved to the hell, else out of it.
+function hell.switch_creature_hell(object)
 	local pos = object:getpos()
 	
 	if object:is_player() then
 
-		if not nethest.is_nether_pos(pos) then
+		if not hell.is_hell_pos(pos) then
 			object:set_sky("0x803020", "plain")
-			pos = nethest.normal_to_netherpos(pos)
+			pos = hell.normal_to_hellpos(pos)
 			object:override_day_night_ratio(0.92)
 		else
 			object:override_day_night_ratio(nil)
-			pos = nethest.nether_to_normalpos(pos)
+			pos = hell.hell_to_normalpos(pos)
 			object:set_sky(nil, "regular")
 		end
 
@@ -38,14 +38,14 @@ function nethest.switch_creature_nether(object)
 	end
 end
 
-minetest.register_chatcommand("nether", {
+minetest.register_chatcommand("hell", {
 	params = "",
-	description = "go to the nether or get out of it",
+	description = "go to the hell or get out of it",
 	privs = {teleport=true},
 	func = function(name, param)
 		local player = minetest.get_player_by_name(name)
 		if player then
-			nethest.switch_creature_nether(player)
+			hell.switch_creature_hell(player)
 		else
 			return false, "Player not found"
 		end
@@ -54,7 +54,7 @@ minetest.register_chatcommand("nether", {
 
 minetest.register_on_joinplayer(function(player)
 	print("aha!")
-	if nethest.is_nether_pos(player:getpos()) then
+	if hell.is_hell_pos(player:getpos()) then
 		player:set_sky("0x803020", "plain")
 		player:override_day_night_ratio(0.92)
 		print("set sky and dn-ratio")
