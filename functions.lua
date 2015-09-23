@@ -38,6 +38,10 @@ function nethest.nether_to_portal_normal_pos(nether_pos)
 	}
 end
 
+function nethest.is_nether_pos(pos)
+	return pos.y < nethest.border
+end
+
 -- When not in nether, object is moved to the nether, else out of it.
 function nethest.switch_creature_nether(object)
 	local pos = object:getpos()
