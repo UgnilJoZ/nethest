@@ -1,0 +1,2 @@
+Glowstone = Leuchtgestein
+Nether Rack = Nethergestein

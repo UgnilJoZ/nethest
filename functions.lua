@@ -63,23 +63,21 @@ end
 
 minetest.register_chatcommand("nether", {
 	params = "",
-	description = "go to the nether or get out of it",
+	description = S("go to the nether or get out of it"),
 	privs = {teleport=true},
 	func = function(name, param)
 		local player = minetest.get_player_by_name(name)
 		if player then
 			nethest.switch_creature_nether(player)
 		else
-			return false, "Player not found"
+			return false, S("Player not found")
 		end
 	end,
 })
 
 minetest.register_on_joinplayer(function(player)
-	print("aha!")
 	if nethest.is_nether_pos(player:getpos()) then
 		player:set_sky("0x803020", "plain")
 		player:override_day_night_ratio(0.92)
-		print("set sky and dn-ratio")
 	end
 end)
