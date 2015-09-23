@@ -1,6 +1,6 @@
 local densenoise_offset = 1 - 2 * (minetest.setting_get("nethest_air_ratio") or 0.75)
 
-local np_density = {
+nethest.np_density = {
 	offset = densenoise_offset,
 	scale = 1,
 	spread = {x=32, y=24, z=32},
@@ -10,15 +10,15 @@ local np_density = {
 	flags = "eased"
 }
 
-local function gen_nether_chunk(minp,maxp, seed)
+function nethest.gen_nether_chunk(minp,maxp, seed)
 	-- content ids
 	local c_air = minetest.get_content_id("air")
 	local c_rack= minetest.get_content_id("nethest:rack")
 	local c_lava= minetest.get_content_id("default:lava_source")
+
 	-- read chunk data
 	local vm = minetest.get_voxel_manip()
 	local emin, emax = vm:read_from_map(minp, maxp)
-	local area = VoxelArea:new{MinEdge=emin, MaxEdge=emax}
 	local data = vm:get_data()
 	local light = vm:get_light_data()
 	local chulens = {x=emax.x-emin.x+1, y=emax.y-emin.y+1, z=emax.z-emin.z+1}
@@ -29,11 +29,12 @@ local function gen_nether_chunk(minp,maxp, seed)
 	-- initialize data index
 	local nixyz = 0
 
-	-- iterate through data and fill with materials
+	-- iterate through area and fill with materials and enlighten
 	for z = emin.z,emax.z do
 		for y = emin.y,emax.y do
 			for x = emin.x,emax.x do
 				nixyz = nixyz + 1
+
 				-- light
 				if y < -30872 then
 					light[nixyz] = 255
@@ -62,6 +63,6 @@ end
 
 minetest.register_on_generated(function(minp,maxp,seed)
 	if minp.y < nethest.border then
-		gen_nether_chunk(minp,maxp,seed)
+		nethest.gen_nether_chunk(minp,maxp,seed)
 	end
 end)
