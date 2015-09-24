@@ -1,2 +1,4 @@
 Glowstone = Leuchtgestein
 Nether Rack = Nethergestein
+go to the nether or get out of it = In den Nether oder aus ihm heraus teleportieren
+Player not found = Spieler nicht gefunden
