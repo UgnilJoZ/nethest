@@ -2,3 +2,6 @@ Glowstone = Leuchtgestein
 Nether Rack = Nethergestein
 go to the nether or get out of it = In den Nether oder aus ihm heraus teleportieren
 Player not found = Spieler nicht gefunden
+Nether Portal = Netherportal
+has moved to nether. Good Luck! = zog es in den Nether. Wünscht ihm Glück!
+Entity moved to nether. = Ein Wesen ist in den Nether gegangen.

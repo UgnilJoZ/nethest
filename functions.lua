@@ -9,7 +9,7 @@ end
 function nethest.nether_to_normalpos(nether_pos)
 	return {
 		x = nether_pos.x * 8,
-		y = (nether_pos.y + 30800) * 32,
+		y = nether_pos.y + 30800,
 		z = nether_pos.z * 8
 	}
 end
@@ -85,3 +85,22 @@ minetest.register_on_joinplayer(function(player)
 		player:override_day_night_ratio(0.92)
 	end
 end)
+
+nethest.portal_abm = {
+	nodenames = {"nethest:portal"},
+	interval = 10,
+	chance = 1,
+	action = function(pos, node)
+		print("PORTAL-ABM")
+		for _, obj in ipairs(minetest.get_objects_inside_radius(pos, 1)) do
+			nethest.switch_creature_nether(obj)
+			if obj:is_player() then
+				print(obj:get_player_name() .. S(" has moved to nether. Good Luck!"))
+			else
+				print(S("Entity moved to nether."))
+			end
+		end
+	end
+}
+
+minetest.register_abm(nethest.portal_abm)
