@@ -45,21 +45,44 @@ end
 -- When not in nether, object is moved to the nether, else out of it.
 function nethest.switch_creature_nether(object)
 	local pos = object:getpos()
+	local minp, maxp
 	
 	if nethest.is_nether_pos(pos) then
+		pos = nethest.nether_to_normalpos(pos)
+
+		minp = {x=pos.x-20, y=pos.y-20, z=pos.z-20}
+		maxp = {x=pos.x+20, y=pos.y+20, z=pos.z+20}
+		
 		if object:is_player() then
 			object:override_day_night_ratio(nil)
 			object:set_sky(nil, "regular")
+			print(object:get_player_name() .. " " .. S("managed to get back."))
 		end
-
-		pos = nethest.nether_to_normalpos(pos)
 	else
 		if object:is_player() then
 			object:set_sky("0x803020", "plain")
 			object:override_day_night_ratio(0.92)
+			print(object:get_player_name() .. " " .. S("takes the highway to nether."))
 		end
 
 		pos = nethest.normal_to_netherpos(pos)
+		minp = {x=pos.x-3, y=pos.y-3, z=pos.z-3}
+		maxp = {x=pos.x+3, y=pos.y+3, z=pos.z+3}
+
+	end
+
+	-- Find existing portal rather than creating a new one
+	minetest.emerge_area(minp, maxp)
+	local existing_portal = minetest.find_nodes_in_area(minp, maxp, {"nethest:portal"})
+	if #existing_portal > 0 then
+		print("Old portal")
+		pos = existing_portal[1]
+	else
+		print("Neues Portal")
+		-- Okay okay, we have to build one (or find_nodes_in_area has again malfunctioned…)
+		minetest.set_node({x=pos.x, y=pos.y-2, z=pos.z}, {name="default:obsidian"})
+		minetest.set_node({x=pos.x, y=pos.y-1, z=pos.z}, {name="nethest:portal"})
+		minetest.set_node({x=pos.x, y=pos.y, z=pos.z}, {name="nethest:portal"})
 	end
 
 	object:setpos(pos)
@@ -88,17 +111,20 @@ end)
 
 nethest.portal_abm = {
 	nodenames = {"nethest:portal"},
-	interval = 10,
+	interval = 4,
 	chance = 1,
 	action = function(pos, node)
-		print("PORTAL-ABM")
 		for _, obj in ipairs(minetest.get_objects_inside_radius(pos, 1)) do
-			nethest.switch_creature_nether(obj)
-			if obj:is_player() then
-				print(obj:get_player_name() .. S(" has moved to nether. Good Luck!"))
-			else
-				print(S("Entity moved to nether."))
-			end
+			local oldpos = obj:getpos()
+
+			minetest.after(2, function(obj, oldpos)
+				local newpos = obj:getpos()
+				if (minetest.get_node({x=newpos.x,y=newpos.y+1, z=newpos.z}).name == "nethest:portal") and (vector.distance(oldpos, obj:getpos()) < 8192) then
+					nethest.switch_creature_nether(obj)
+				else
+					--print("distance: " .. vector.distance(oldpos, obj:getpos()))
+				end
+			end, obj, oldpos)
 		end
 	end
 }
