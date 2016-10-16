@@ -19,7 +19,7 @@ function nethest.is_nether_pos(pos)
 end
 
 local function grid(value, gridwidth)
-	value = math.floor(value / gridwidth) * gridwidth
+	value = math.floor(value / gridwidth) * gridwidth + gridwith / 2
 end
 
 function nethest.normal_to_portal_nether_pos(normal_pos)
@@ -118,6 +118,9 @@ nethest.portal_abm = {
 			local oldpos = obj:getpos()
 
 			minetest.after(2, function(obj, oldpos)
+				if not obj then
+					return
+				end
 				local newpos = obj:getpos()
 				if (minetest.get_node({x=newpos.x,y=newpos.y+1, z=newpos.z}).name == "nethest:portal") and (vector.distance(oldpos, obj:getpos()) < 8192) then
 					nethest.switch_creature_nether(obj)
